@@ -7,7 +7,7 @@ Availability of Raspberry Pi SBCs was limited in 2021 through 2022, with various
 
 Internationally the [Rpi Locator project](https://rpilocator.com/) tracks availability for US and EU retailers. However there is no support for Indian retailers.
 
-### Supported Retailers
+### Supported Indian Retailers
 
 - Robu
 - <s>Silverline</s> See https://github.com/salian/raspi-instock/issues/6
