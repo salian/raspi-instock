@@ -63,7 +63,9 @@ def monitor_robu():
 
         interesting_skus = ['757102', '471149', '471148', '471147', '169868', '1124637', '10973', '785898', '57418',
                             '84661', '1359500']
-        
+
+        blacklisted_skus = ['51590', '1363865', '722207', ]   # add to this list if you have unwanted SKUs triggering the alert
+
         notify_product_list = []
         for product in search_results:
             # Put your matching rules here
@@ -71,10 +73,20 @@ def monitor_robu():
             # Match the SKU from a preset list
             if product['sku'] in interesting_skus and product['in_stock']:
                 notify_product_list.append(product)
-            
-            # Match product price
-            if product['amount'] > 4500 and product['in_stock']:
+
+            # Match part of the product name
+            if 'Raspberry Pi 4' in product['name'] and product['in_stock'] and product['sku'] not in blacklisted_skus:
                 notify_product_list.append(product)
+
+            # Match part of the product name
+            if 'Raspberry Pi Zero' in product['name'] and product['in_stock'] and product['sku'] not in blacklisted_skus:
+                notify_product_list.append(product)
+
+            # # Match product price
+            # if product['amount'] > 4500 and product['in_stock']:
+            #     notify_product_list.append(product)
+
+            # ... add any other conditions here
 
         # remove duplicates where multiple rules have matched above
         notify_product_list_unique = []
