@@ -17,6 +17,39 @@ ROBU_URL_LIST = [
     'https://robu.in/?s=raspberry+pi+kit&product_cat=raspberry-pi-kit&post_type=product'
 ]
 
+ROBOCRAZE_URL_LIST = [
+    'https://robocraze.com/collections/boards-raspberry-pi'
+]
+
+def fetch_results_robocraze(url: str) -> list[dict[str, float | bool]]:
+    scraper = cloudscraper.create_scraper()
+    
+    try:
+        page_html = scraper.get(url).text
+    except ConnectionError:
+        page_html = ''
+    
+    soup = BeautifulSoup(page_html, 'html.parser')
+    
+    products = soup.find_all('li', {'class': 'grid__item'})
+    
+    product_status_list = []
+        
+    for product in products:
+        product_status = {}
+        product_status['name'] = product.find('div', {'class': 'product-card__title'}).string
+        product_status['sku'] = product.find_all('p', 'data-product-id'==True)[0]['data-product-id']
+        product_status['price'] = float(product.find('span', {'class': 'price-item'}).text.replace('\n','').split(' ')[-1])
+
+        if product.find('span', {'class':'atc_text'}):
+            product_status['in_stock'] = True
+        else:
+            product_status['in_stock'] = False
+        
+        product_status_list.append(product_status)
+        
+    return product_status_list
+
 def fetch_page(url: str) -> list[dict[str, float | bool]]:
     scraper = cloudscraper.create_scraper()
     try:
