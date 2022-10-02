@@ -97,6 +97,17 @@ def monitor_robu():
         if len(notify_product_list_unique) > 0:
             # Open Robu.in in a browser
             open_url(ROBU_URL)
+            datetime.now().strftime(date_format)
+            print(datetime.now().strftime(date_format), 'Notify!', notify_product_list_unique, ROBU_URL)
+            product_string = ", ".join([product['name'] for product in notify_product_list_unique])
+            client.create_notification(
+                title="Item back in stock at Robu",
+                subtitle=product_string,
+                action_button_str="Open Robu.in",
+                action_callback=partial(open_url, url=ROBU_URL),
+            )
+            time.sleep(30)
+            client.stop_listening_for_callbacks()
         else:
             out_of_stock_count = len(search_results)
             print(datetime.now().strftime(date_format), "Nothing in stock.", out_of_stock_count, "out of stock.")
