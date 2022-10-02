@@ -26,6 +26,6 @@ This script supports Mac OS X notifications. If you are on your Mac when the ite
 
 ---
 
-## Scalping
+## Not a Scalping Tool
 
 This is not a scalping tool. The prices shown will be set by retailers and are most likely going to be higher than the MRP/MSRP prices, so this tool may not be useful if you are looking to resell the SBCs for a profit.
