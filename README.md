@@ -10,8 +10,8 @@ Internationally the [Rpi Locator project](https://rpilocator.com/) tracks availa
 ### Supported Indian Retailers
 
 - Robu
+- Robocraze
 - <s>Silverline</s> See https://github.com/salian/raspi-instock/issues/6
-- <s>Robocraze</s>
 
 ## Using this script
 
