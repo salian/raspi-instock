@@ -21,6 +21,11 @@ ROBOCRAZE_URL_LIST = [
     'https://robocraze.com/collections/boards-raspberry-pi'
 ]
 
+ROBOMART_URL_LIST = [
+    'https://www.robomart.com/raspberry-pi-india/raspberry-pi-boards',
+    'https://www.robomart.com/raspberry-pi-india/raspberry-pi-starter-kits'
+]
+
 def fetch_results_robocraze(url: str) -> list[dict[str, float | bool]]:
     scraper = cloudscraper.create_scraper()
     
@@ -78,6 +83,34 @@ def fetch_page(url: str) -> list[dict[str, float | bool]]:
         product_status_list.append(product_status)
     return product_status_list
 
+def fetch_results_robomart(url: str) -> list[dict[str, float | bool]]:
+    scraper = cloudscraper.create_scraper()
+    
+    try:
+        page_html = scraper.get(url).text
+    except ConnectionError:
+        page_html = ''
+    
+    soup = BeautifulSoup(page_html, 'html.parser')
+    
+    products = soup.find_all('li', {'class': 'product-layout'})
+    
+    product_status_list = []
+        
+    for product in products:
+        product_status = {}
+        product_status['name'] = product.find('div', {'class': 'item-title'}).text
+        product_status['sku'] = product.find('strong').text.split(': ')[-1]
+        product_status['price'] = float(product.find('span', {'class': 'price'}).text.replace(',','').split('.')[0])
+
+        if product.find('div', {'class':'in-stock'}):
+            product_status['in_stock'] = True
+        else:
+            product_status['in_stock'] = False
+
+        product_status_list.append(product_status)
+
+    return product_status_list
 
 def open_url(url: str) -> None:
     webbrowser.open(url, new=0, autoraise=True)
