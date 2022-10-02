@@ -55,34 +55,6 @@ def fetch_results_robocraze(url: str) -> list[dict[str, float | bool]]:
         
     return product_status_list
 
-def fetch_page(url: str) -> list[dict[str, float | bool]]:
-    scraper = cloudscraper.create_scraper()
-    try:
-        page_html = scraper.get(url).text
-    except ConnectionError:
-        page_html = ''  # Connection Error, returning blank page
-        # Perhaps notify here?
-    soup = BeautifulSoup(page_html, 'html.parser')
-    products = soup.find_all('li', {'class': 'product'})
-    # print(soup.get_text())
-    product_status_list = []
-    for product in products:
-        product_status = {}
-        if product.find('a', {'class': 'add_to_cart_button'}):
-            in_stock = True
-        else:
-            in_stock = False
-        # print(product.h2.string, in_stock)
-
-        product_status['name'] = product.h2.string
-        product_status['sku'] = product.find('div', {'class': 'product-sku'}).string[5:]
-        amount_tag = product.find('span', {'class': 'amount'}).bdi
-        amount_tag.span.decompose()  # remove the extra span for currency symbol
-        product_status['amount'] = float(amount_tag.string.strip().replace(",", ""))
-        product_status['in_stock'] = in_stock
-        product_status_list.append(product_status)
-    return product_status_list
-
 def fetch_results_robomart(url: str) -> list[dict[str, float | bool]]:
     scraper = cloudscraper.create_scraper()
     
@@ -110,6 +82,34 @@ def fetch_results_robomart(url: str) -> list[dict[str, float | bool]]:
 
         product_status_list.append(product_status)
 
+    return product_status_list
+
+def fetch_page(url: str) -> list[dict[str, float | bool]]:
+    scraper = cloudscraper.create_scraper()
+    try:
+        page_html = scraper.get(url).text
+    except ConnectionError:
+        page_html = ''  # Connection Error, returning blank page
+        # Perhaps notify here?
+    soup = BeautifulSoup(page_html, 'html.parser')
+    products = soup.find_all('li', {'class': 'product'})
+    # print(soup.get_text())
+    product_status_list = []
+    for product in products:
+        product_status = {}
+        if product.find('a', {'class': 'add_to_cart_button'}):
+            in_stock = True
+        else:
+            in_stock = False
+        # print(product.h2.string, in_stock)
+
+        product_status['name'] = product.h2.string
+        product_status['sku'] = product.find('div', {'class': 'product-sku'}).string[5:]
+        amount_tag = product.find('span', {'class': 'amount'}).bdi
+        amount_tag.span.decompose()  # remove the extra span for currency symbol
+        product_status['amount'] = float(amount_tag.string.strip().replace(",", ""))
+        product_status['in_stock'] = in_stock
+        product_status_list.append(product_status)
     return product_status_list
 
 def open_url(url: str) -> None:
