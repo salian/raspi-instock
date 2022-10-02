@@ -71,6 +71,10 @@ def monitor_robu():
             # Match the SKU from a preset list
             if product['sku'] in interesting_skus and product['in_stock']:
                 notify_product_list.append(product)
+            
+            # Match product price
+            if product['amount'] > 4500 and product['in_stock']:
+                notify_product_list.append(product)
 
         # remove duplicates where multiple rules have matched above
         notify_product_list_unique = []
