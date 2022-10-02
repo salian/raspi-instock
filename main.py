@@ -9,7 +9,13 @@ import webbrowser
 from random import randrange
 from requests.exceptions import ConnectionError
 
-ROBU_URL = 'https://robu.in/?s=raspberry+pi&product_cat=official-boards-and-accessories&post_type=product'
+# ROBU_URL = 'https://robu.in/?s=raspberry+pi+kit&product_cat=raspberry-pi-kit&post_type=product'
+# ROBU_URL = 'https://robu.in/?s=raspberry+pi&product_cat=official-boards-and-accessories&post_type=product'
+
+ROBU_URL_LIST = [
+    'https://robu.in/?s=raspberry+pi&product_cat=official-boards-and-accessories&post_type=product',
+    'https://robu.in/?s=raspberry+pi+kit&product_cat=raspberry-pi-kit&post_type=product'
+]
 
 def fetch_page(url: str) -> list[dict[str, float | bool]]:
     scraper = cloudscraper.create_scraper()
@@ -45,37 +51,39 @@ def open_url(url: str) -> None:
 
 
 def monitor_robu():
+    for ROBU_URL in ROBU_URL_LIST:
+        # fetch search result
+        search_results = fetch_page(ROBU_URL)
 
-    # fetch search result
-    search_results = fetch_page(ROBU_URL)
+        # uncomment for printing all search results
+        pprint.pprint(search_results)
 
-    # uncomment for printing all search results
-    pprint.pprint(search_results)
+        # have a list of SKUs to track
+        # interesting_skus = ['757102', '471149', '471148', '471147', '169868', '1124637', '10973', '785898', '57418', '84661']
 
-    # have a list of SKUs to track
-    interesting_skus = ['757102', '471149', '471148', '471147', '169868', '1124637', '10973', '785898', '57418', '84661']
+        interesting_skus = ['757102', '471149', '471148', '471147', '169868', '1124637', '10973', '785898', '57418',
+                            '84661', '1359500']
+        
+        notify_product_list = []
+        for product in search_results:
+            # Put your matching rules here
 
-    notify_product_list = []
-    for product in search_results:
-        # Put your matching rules here
+            # Match the SKU from a preset list
+            if product['sku'] in interesting_skus and product['in_stock']:
+                notify_product_list.append(product)
 
-        # Match the SKU from a preset list
-        if product['sku'] in interesting_skus and product['in_stock']:
-            notify_product_list.append(product)
+        # remove duplicates where multiple rules have matched above
+        notify_product_list_unique = []
+        [notify_product_list_unique.append(x) for x in notify_product_list if x not in notify_product_list_unique]
+        date_format = '%Y-%m-%d %H:%M:%S'
+        # log_format = '%(asctime)s|%(levelname)8s| {%(module)s} [%(funcName)s] <%(processName)s> %(message)s'
 
-
-    # remove duplicates where multiple rules have matched above
-    notify_product_list_unique = []
-    [notify_product_list_unique.append(x) for x in notify_product_list if x not in notify_product_list_unique]
-    date_format = '%Y-%m-%d %H:%M:%S'
-    # log_format = '%(asctime)s|%(levelname)8s| {%(module)s} [%(funcName)s] <%(processName)s> %(message)s'
-
-    if len(notify_product_list_unique) > 0:
-        # Open Robu.in in a browser
-        open_url(ROBU_URL)
-    else:
-        out_of_stock_count = len(search_results)
-        print(datetime.now().strftime(date_format), "Nothing in stock.", out_of_stock_count, "out of stock.")
+        if len(notify_product_list_unique) > 0:
+            # Open Robu.in in a browser
+            open_url(ROBU_URL)
+        else:
+            out_of_stock_count = len(search_results)
+            print(datetime.now().strftime(date_format), "Nothing in stock.", out_of_stock_count, "out of stock.")
 
 
 if __name__ == '__main__':
