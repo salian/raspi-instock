@@ -5,12 +5,12 @@
 
 Availability of Raspberry Pi SBCs was limited in 2021 through 2022, with various online stores having limited stock, or single-unit order restrictions in place. If you have existing projects needing a Raspberry Pi or if you are building a project requiring multiple Raspberry Pis (like a cluster) then you are left looking for Raspberry Pi on various online stores. 
 
-Internationally the Rpi Locator project (https://rpilocator.com/) tracks availability for US and EU retailers. However there is no support for Indian retailers.
+Internationally the [Rpi Locator project](https://rpilocator.com/) tracks availability for US and EU retailers. However there is no support for Indian retailers.
 
 ### Supported Retailers
 
 - Robu
-- Silverline
+- <s>Silverline</s> See https://github.com/salian/raspi-instock/issues/6
 
 ## Using this script
 
